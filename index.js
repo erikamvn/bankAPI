@@ -1,49 +1,24 @@
 var express = require("express");
 var fs = require("fs");
-
 var app = express();
+var accountsRouter = require("./routes/accounts.js")
+
+global.fileName = "accounts.json";
 
 app.use(express.json());
-
-app.post("/acount", (req, res) =>{
-    let account = req.body;
-
-    fs.readFile("accounts.json", "utf8", (err, data) =>{
-        if (!err){
-            try{
-                let json = JSON.parse(data);
-                account = { id: json.nextId, ...account };
-                json.nextId ++;
-                json.accounts.push(account);
-
-                fs.writeFile("accounts.json", JSON.stringify(json), err => {
-                    if (err) {
-                        console.log(err);
-                    }else {
-                        res.end();
-                    }
-                });
-            } catch (err){
-                res.status(400).send({ error: err.menssage });    
-            }
-            
-        }else {
-            res.status(400).send({ error: err.menssage });
-        }
-    });
-});
+app.use("/account", accountsRouter);
 
 
 app.listen(3000, function () {
 
     try{
-        fs.readFile("accounts.json", "utf8", (err, data) => {
+        fs.readFile(fileName, "utf8", (err, data) => {
             if (err){
                 const initialJson = {
                     nextId: 1,
                     accounts: []
                 };
-                fs.writeFile("accounts.json", JSON.stringify(initialJson), err => {
+                fs.writeFile(fileName, JSON.stringify(initialJson), err => {
                     if(err){
                         console.log(err)
                     }
