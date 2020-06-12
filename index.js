@@ -1,27 +1,19 @@
-var express = require("express");
-var fs = require("fs").promises;
+var express = require('express');
+var fs = require('fs').promises;
 var app = express();
-var accountsRouter = require("./routes/accounts.js")
+var gradesRouter = require('./routes/grades.js');
 
-global.fileName = "accounts.json";
+global.fileName = "grades.json";
 
 app.use(express.json());
-app.use("/account", accountsRouter);
-
+app.use('/grade', gradesRouter);
 
 app.listen(3000, async () => {
-
     try{
         await fs.readFile(global.fileName, "utf8");
-    } catch (err){
-        const initialJson = {
-            nextId: 1,
-            accounts: []
-        };
-        fs.writeFile(global.fileName, JSON.stringify(initialJson)).catch(err => {
-            console.log(err);
-        });
+    }catch (err){
+        console.log("Atenção o arquivo grades.json não existe no sistema");
     }
 
-    console.log("Api Started!");
+    console.log("Api started!");
 });
